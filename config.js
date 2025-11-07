@@ -10,7 +10,7 @@
 
 const CONFIG = {
   // Replace with your Apps Script web app URL
-  API_URL: 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE',
+  API_URL: 'https://script.google.com/macros/s/AKfycbxCKMwcaRaFcux5IQgUznn4Ar3B2AxSXnGzRsq_JwRHrHjbnyvfwpr9fUAj3NFTITUq/exec',
 
   // Auto-refresh interval in milliseconds (30 seconds)
   REFRESH_INTERVAL: 30000,
