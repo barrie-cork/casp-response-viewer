@@ -1,0 +1,14 @@
+# Apps Script code (deployed separately to Google Apps Script)
+apps-script/
+
+# macOS
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
