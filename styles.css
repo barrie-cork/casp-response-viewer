@@ -1,0 +1,517 @@
+/* ===== CASP Response Viewer - Styles ===== */
+/* Optimized for classroom use: compact 14px layout, full-width cards */
+
+/* ===== Global Styles ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f5f5;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ===== Header ===== */
+.header {
+  background: white;
+  border-bottom: 3px solid #4285f4;
+  padding: 15px 0;
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 28px;
+  color: #333;
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.update-time {
+  font-size: 14px;
+  color: #666;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.btn-refresh {
+  background: #4285f4;
+  color: white;
+}
+
+.btn-refresh:hover {
+  background: #357ae8;
+}
+
+.btn-nav {
+  background: #4285f4;
+  color: white;
+  min-width: 120px;
+}
+
+.btn-nav:hover:not(:disabled) {
+  background: #357ae8;
+}
+
+.btn-nav:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ===== Navigation ===== */
+.navigation {
+  background: white;
+  padding: 15px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.navigation .container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-select {
+  flex: 1;
+  max-width: 600px;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+}
+
+/* ===== Filters ===== */
+.filters {
+  background: white;
+  padding: 15px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.filters .container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: #666;
+  margin-right: 5px;
+}
+
+.btn-filter {
+  padding: 8px 16px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s;
+}
+
+.btn-filter:hover {
+  background: #f0f0f0;
+}
+
+.btn-filter.active {
+  background: #4285f4;
+  color: white;
+  border-color: #4285f4;
+}
+
+/* ===== Main Content ===== */
+.main {
+  padding: 15px 0;
+}
+
+/* ===== Question Header - STICKY AT TOP ===== */
+.question-header {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.question-title {
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.question-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* ===== CONSIDER Prompts Toggle ===== */
+.consider-toggle {
+  margin-top: 10px;
+}
+
+.btn-consider {
+  padding: 6px 12px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #555;
+  transition: all 0.3s;
+}
+
+.btn-consider:hover {
+  background: #e0e0e0;
+}
+
+.consider-content {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-left: 3px solid #4285f4;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+  display: none;
+}
+
+.consider-content.show {
+  display: block;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.consider-content ul {
+  margin: 5px 0 0 20px;
+  padding: 0;
+}
+
+.consider-content li {
+  margin-bottom: 5px;
+}
+
+/* ===== Explanation Cards Grid - FULL WIDTH VERTICAL LAYOUT ===== */
+.cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 18px;
+}
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: #d32f2f;
+  font-size: 18px;
+  background: #ffebee;
+  border-radius: 8px;
+}
+
+.no-responses {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 18px;
+  background: white;
+  border-radius: 8px;
+}
+
+/* ===== Individual Explanation Card - COMPACT SPACING ===== */
+.explanation-card {
+  background: white;
+  border-left: 4px solid #4285f4;
+  border-radius: 8px;
+  padding: 10px 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  display: block;
+}
+
+.explanation-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.explanation-card.top-voted {
+  border-left-color: #ffa500;
+  background: #fff9e6;
+}
+
+/* ===== Card Header ===== */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eee;
+}
+
+.student-id {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+.answer-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.answer-yes {
+  background: #d4edda;
+  color: #155724;
+}
+
+.answer-no {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.answer-cant-tell {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* ===== Explanation Text - 14PX FONT, COMPACT SPACING ===== */
+.explanation-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.explanation-text.empty {
+  color: #999;
+  font-style: italic;
+}
+
+/* ===== Card Footer - Voting Controls ===== */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+  border-top: 1px solid #eee;
+}
+
+.vote-count {
+  font-size: 16px;
+  font-weight: 600;
+  color: #4285f4;
+}
+
+.btn-vote {
+  padding: 6px 14px;
+  background: #34a853;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.btn-vote:hover {
+  background: #2d8e47;
+  transform: scale(1.05);
+}
+
+.btn-vote:active {
+  transform: scale(0.95);
+}
+
+/* ===== Statistics ===== */
+.statistics {
+  background: white;
+  margin-top: 30px;
+  padding: 20px 0;
+  border-top: 3px solid #4285f4;
+}
+
+.btn-toggle {
+  padding: 10px 20px;
+  background: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.btn-toggle:hover {
+  background: #357ae8;
+}
+
+.statistics-content {
+  margin-top: 20px;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.chart-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chart-container h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #333;
+}
+
+/* ===== Responsive Design ===== */
+
+/* Mobile devices (phones) */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 20px;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .navigation .container {
+    flex-direction: column;
+  }
+
+  .question-select {
+    max-width: 100%;
+  }
+
+  .question-title {
+    font-size: 18px;
+  }
+
+  .explanation-text {
+    font-size: 12px;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-nav {
+    min-width: 100px;
+    font-size: 14px;
+  }
+}
+
+/* Tablet devices */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .question-title {
+    font-size: 20px;
+  }
+
+  .explanation-text {
+    font-size: 13px;
+  }
+}
+
+/* Large screens (projectors) */
+@media (min-width: 1920px) {
+  .question-title {
+    font-size: 28px;
+  }
+
+  .explanation-text {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1600px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .header,
+  .navigation,
+  .filters,
+  .statistics,
+  .btn-vote,
+  .btn-consider {
+    display: none;
+  }
+
+  .question-header {
+    position: static;
+  }
+
+  .explanation-card {
+    page-break-inside: avoid;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+  }
+}

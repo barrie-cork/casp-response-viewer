@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CASP Response Viewer - Classroom Discussion Tool</title>
+  <meta name="description" content="Interactive viewer for anonymous student CASP critical appraisal responses">
+
+  <!-- Chart.js for statistics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header with controls -->
+  <header class="header">
+    <div class="container">
+      <h1>CASP Response Viewer</h1>
+      <div class="controls">
+        <button class="btn btn-refresh" onclick="app.loadData()" title="Refresh data">
+          🔄 Refresh
+        </button>
+        <span class="update-time" id="updateTime">Loading...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="navigation">
+    <div class="container">
+      <button class="btn btn-nav" id="prevBtn" onclick="app.prevQuestion()" disabled>
+        ← Previous
+      </button>
+
+      <select class="question-select" id="questionSelect" onchange="app.loadQuestion(this.value)">
+        <!-- Populated by JavaScript -->
+      </select>
+
+      <button class="btn btn-nav" id="nextBtn" onclick="app.nextQuestion()">
+        Next →
+      </button>
+    </div>
+  </nav>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="container">
+      <span class="filter-label">Filter by answer:</span>
+      <button class="btn-filter active" data-filter="all" onclick="app.filterByAnswer('all')">
+        Show All (<span id="countAll">0</span>)
+      </button>
+      <button class="btn-filter" data-filter="yes" onclick="app.filterByAnswer('yes')">
+        Yes (<span id="countYes">0</span>)
+      </button>
+      <button class="btn-filter" data-filter="no" onclick="app.filterByAnswer('no')">
+        No (<span id="countNo">0</span>)
+      </button>
+      <button class="btn-filter" data-filter="cant-tell" onclick="app.filterByAnswer('cant-tell')">
+        Can't Tell (<span id="countCantTell">0</span>)
+      </button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <main class="main">
+    <div class="container">
+      <!-- Question title (sticky at top) -->
+      <div class="question-header" id="questionHeader">
+        <h2 class="question-title" id="questionTitle">Loading question...</h2>
+        <p class="question-subtitle">Compare student explanations below - vote for the most comprehensive reasoning</p>
+
+        <!-- CONSIDER prompts toggle -->
+        <div class="consider-toggle">
+          <button class="btn-consider" id="considerBtn" onclick="app.toggleConsider()">
+            📋 Show CONSIDER Prompts
+          </button>
+          <div class="consider-content" id="considerContent">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Explanation cards grid -->
+      <div class="cards-grid" id="cardsGrid">
+        <div class="loading">Loading responses...</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Statistics dashboard (collapsible) -->
+  <aside class="statistics" id="statistics">
+    <div class="container">
+      <button class="btn-toggle" id="statsBtn" onclick="app.toggleStatistics()">
+        📊 Show Statistics
+      </button>
+
+      <div class="statistics-content" id="statisticsContent" style="display: none;">
+        <div class="charts-grid">
+          <div class="chart-container">
+            <h3>Answer Distribution</h3>
+            <canvas id="answerChart"></canvas>
+          </div>
+          <div class="chart-container">
+            <h3>Top Voted Responses</h3>
+            <canvas id="votingChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Scripts -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
