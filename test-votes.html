@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Votes Loading</title>
+</head>
+<body>
+    <h1>Testing Vote Loading</h1>
+    <div id="output"></div>
+
+    <script src="config.js"></script>
+    <script>
+        async function testVotes() {
+            const output = document.getElementById('output');
+
+            try {
+                // Test getVotes endpoint
+                output.innerHTML += '<h2>Testing getVotes endpoint:</h2>';
+                const votesResponse = await fetch(`${CONFIG.API_URL}?action=getVotes`);
+                const votesData = await votesResponse.json();
+
+                output.innerHTML += '<pre>' + JSON.stringify(votesData, null, 2) + '</pre>';
+
+                // Parse the votes
+                output.innerHTML += '<h2>Parsed Votes:</h2>';
+                const votes = {};
+
+                Object.entries(votesData).forEach(([key, count]) => {
+                    const match = key.match(/q(\d+)_s(\d+)/);
+                    if (match) {
+                        const newKey = `${match[1]}_${match[2]}`;
+                        votes[newKey] = count;
+                        output.innerHTML += `<p>Question ${parseInt(match[1])+1}, Student ${parseInt(match[2])+1}: ${count} votes</p>`;
+                    }
+                });
+
+                output.innerHTML += '<h2>Final votes object for app:</h2>';
+                output.innerHTML += '<pre>' + JSON.stringify(votes, null, 2) + '</pre>';
+
+            } catch (error) {
+                output.innerHTML += `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Run test on load
+        testVotes();
+    </script>
+</body>
+</html>

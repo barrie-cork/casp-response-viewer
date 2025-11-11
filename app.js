@@ -7,6 +7,7 @@ class CASPResponseViewer {
     constructor() {
         this.data = null;
         this.votes = {};
+        this.userVotes = {};
         this.currentQuestionIndex = 0;
         this.currentFilter = 'all';
         this.autoRefresh = CONFIG.AUTO_REFRESH;
@@ -120,36 +121,29 @@ class CASPResponseViewer {
     }
 
     async loadVotes() {
-        // First check if votes are already embedded in the data
-        if (this.data && this.data.questions) {
-            this.votes = {};
-
-            // Check if votes are in the nested structure
-            this.data.questions.forEach((q, qIndex) => {
-                if (q.responses) {
-                    q.responses.forEach(r => {
-                        if (r.votes) {
-                            const key = `${qIndex}_${r.rowIndex}`;
-                            this.votes[key] = r.votes;
-                        }
-                    });
-                }
-            });
-
-            // If we found embedded votes, we're done
-            if (Object.keys(this.votes).length > 0) {
-                return;
-            }
-        }
-
-        // Otherwise try to fetch votes separately
         try {
             const response = await fetch(`${CONFIG.API_URL}?action=getVotes`);
             if (response.ok) {
                 const votesData = await response.json();
-                // Process votes into a structured format
+
+                // The API returns votes in format: {"q0_s0": 2, "q1_s3": 1, ...}
+                // We need to convert to: {"0_0": 2, "1_3": 1, ...}
                 this.votes = {};
-                if (votesData.votes) {
+
+                if (votesData && typeof votesData === 'object') {
+                    // Check if it's the direct format from getVotes
+                    Object.entries(votesData).forEach(([key, count]) => {
+                        // Parse the key format "q0_s0" to "0_0"
+                        const match = key.match(/q(\d+)_s(\d+)/);
+                        if (match) {
+                            const newKey = `${match[1]}_${match[2]}`;
+                            this.votes[newKey] = count;
+                        }
+                    });
+
+                    console.log('Loaded votes:', this.votes);
+                } else if (votesData.votes) {
+                    // Alternative format with votes array
                     votesData.votes.forEach(vote => {
                         const key = `${vote.questionIndex}_${vote.studentRowIndex}`;
                         this.votes[key] = (this.votes[key] || 0) + 1;
@@ -175,9 +169,6 @@ class CASPResponseViewer {
 
             // Create a map of student responses
             const studentMap = new Map();
-
-            // Extract votes while transforming
-            const extractedVotes = {};
 
             // Process each question
             rawData.questions.forEach((q, qIndex) => {
@@ -208,20 +199,12 @@ class CASPResponseViewer {
                             answer: r.answer,
                             explanation: r.explanation
                         };
-
-                        // Extract votes if present
-                        if (r.votes) {
-                            extractedVotes[`${qIndex}_${r.rowIndex}`] = r.votes;
-                        }
                     });
                 }
             });
 
             // Convert map to array
             transformedData.responses = Array.from(studentMap.values());
-
-            // Store extracted votes for later use
-            this.votes = extractedVotes;
 
             return transformedData;
         }
