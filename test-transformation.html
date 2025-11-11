@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Data Transformation</title>
+</head>
+<body>
+    <h1>Testing Data Transformation</h1>
+    <div id="output"></div>
+
+    <script src="config.js"></script>
+    <script>
+        async function testTransformation() {
+            const output = document.getElementById('output');
+
+            try {
+                // Fetch data
+                const response = await fetch(CONFIG.API_URL);
+                const rawData = await response.json();
+
+                output.innerHTML += '<h2>Raw Data Structure:</h2>';
+                output.innerHTML += `<p>Questions: ${rawData.questions.length}</p>`;
+                output.innerHTML += `<p>Top-level responses: ${rawData.responses ? rawData.responses.length : 0}</p>`;
+                output.innerHTML += `<p>Q1 nested responses: ${rawData.questions[0].responses ? rawData.questions[0].responses.length : 0}</p>`;
+
+                // Transform data
+                const transformedData = transformData(rawData);
+
+                output.innerHTML += '<h2>Transformed Data Structure:</h2>';
+                output.innerHTML += `<p>Questions: ${transformedData.questions.length}</p>`;
+                output.innerHTML += `<p>Responses: ${transformedData.responses.length}</p>`;
+
+                // Show first response details
+                if (transformedData.responses.length > 0) {
+                    const firstResp = transformedData.responses[0];
+                    output.innerHTML += '<h3>First Response:</h3>';
+                    output.innerHTML += `<p>Student: ${firstResp.studentId}</p>`;
+                    output.innerHTML += `<p>Answers provided: ${firstResp.answers.filter(a => a).length}</p>`;
+
+                    // Show first answer
+                    if (firstResp.answers[0]) {
+                        output.innerHTML += '<h4>Answer to Q1:</h4>';
+                        output.innerHTML += `<p>Choice: ${firstResp.answers[0].answer}</p>`;
+                        output.innerHTML += `<p>Explanation: ${firstResp.answers[0].explanation.substring(0, 100)}...</p>`;
+                    }
+                }
+
+            } catch (error) {
+                output.innerHTML += `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+
+        function transformData(rawData) {
+            // Check if data needs transformation (responses nested in questions)
+            if (rawData.questions && rawData.questions.length > 0 && rawData.questions[0].responses) {
+                // Transform nested structure to flat structure
+                const transformedData = {
+                    questions: [],
+                    responses: [],
+                    totalStudents: rawData.totalStudents || 0,
+                    lastUpdated: rawData.lastUpdated
+                };
+
+                // Create a map of student responses
+                const studentMap = new Map();
+
+                // Process each question
+                rawData.questions.forEach((q, qIndex) => {
+                    // Add question info (without responses)
+                    transformedData.questions.push({
+                        questionText: q.questionText,
+                        considerPrompt: q.considerPrompts ? q.considerPrompts.join('\n• ') : ''
+                    });
+
+                    // Process responses for this question
+                    if (q.responses) {
+                        q.responses.forEach(r => {
+                            // Get or create student entry
+                            if (!studentMap.has(r.rowIndex)) {
+                                studentMap.set(r.rowIndex, {
+                                    index: r.rowIndex,
+                                    studentId: r.studentId,
+                                    answers: []
+                                });
+                            }
+
+                            // Add this answer to the student's answers array
+                            const student = studentMap.get(r.rowIndex);
+                            while (student.answers.length <= qIndex) {
+                                student.answers.push(null);
+                            }
+                            student.answers[qIndex] = {
+                                answer: r.answer,
+                                explanation: r.explanation
+                            };
+                        });
+                    }
+                });
+
+                // Convert map to array
+                transformedData.responses = Array.from(studentMap.values());
+
+                return transformedData;
+            }
+
+            // Data is already in expected format
+            return rawData;
+        }
+
+        // Run test on load
+        testTransformation();
+    </script>
+</body>
+</html>
