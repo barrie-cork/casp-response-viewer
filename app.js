@@ -88,7 +88,10 @@ class CASPResponseViewer {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            this.data = await response.json();
+            const rawData = await response.json();
+
+            // Transform the data structure if needed
+            this.data = this.transformData(rawData);
 
             // Fetch votes
             if (CONFIG.ENABLE_VOTING) {
@@ -117,21 +120,114 @@ class CASPResponseViewer {
     }
 
     async loadVotes() {
+        // First check if votes are already embedded in the data
+        if (this.data && this.data.questions) {
+            this.votes = {};
+
+            // Check if votes are in the nested structure
+            this.data.questions.forEach((q, qIndex) => {
+                if (q.responses) {
+                    q.responses.forEach(r => {
+                        if (r.votes) {
+                            const key = `${qIndex}_${r.rowIndex}`;
+                            this.votes[key] = r.votes;
+                        }
+                    });
+                }
+            });
+
+            // If we found embedded votes, we're done
+            if (Object.keys(this.votes).length > 0) {
+                return;
+            }
+        }
+
+        // Otherwise try to fetch votes separately
         try {
             const response = await fetch(`${CONFIG.API_URL}?action=getVotes`);
             if (response.ok) {
                 const votesData = await response.json();
                 // Process votes into a structured format
                 this.votes = {};
-                votesData.votes.forEach(vote => {
-                    const key = `${vote.questionIndex}_${vote.studentRowIndex}`;
-                    this.votes[key] = (this.votes[key] || 0) + 1;
-                });
+                if (votesData.votes) {
+                    votesData.votes.forEach(vote => {
+                        const key = `${vote.questionIndex}_${vote.studentRowIndex}`;
+                        this.votes[key] = (this.votes[key] || 0) + 1;
+                    });
+                }
             }
         } catch (error) {
             console.error('Error loading votes:', error);
             // Continue without votes
         }
+    }
+
+    transformData(rawData) {
+        // Check if data needs transformation (responses nested in questions)
+        if (rawData.questions && rawData.questions.length > 0 && rawData.questions[0].responses) {
+            // Transform nested structure to flat structure
+            const transformedData = {
+                questions: [],
+                responses: [],
+                totalStudents: rawData.totalStudents || 0,
+                lastUpdated: rawData.lastUpdated
+            };
+
+            // Create a map of student responses
+            const studentMap = new Map();
+
+            // Extract votes while transforming
+            const extractedVotes = {};
+
+            // Process each question
+            rawData.questions.forEach((q, qIndex) => {
+                // Add question info (without responses)
+                transformedData.questions.push({
+                    questionText: q.questionText,
+                    considerPrompt: q.considerPrompts ? q.considerPrompts.join('\n• ') : ''
+                });
+
+                // Process responses for this question
+                if (q.responses) {
+                    q.responses.forEach(r => {
+                        // Get or create student entry
+                        if (!studentMap.has(r.rowIndex)) {
+                            studentMap.set(r.rowIndex, {
+                                index: r.rowIndex,
+                                studentId: r.studentId,
+                                answers: []
+                            });
+                        }
+
+                        // Add this answer to the student's answers array
+                        const student = studentMap.get(r.rowIndex);
+                        while (student.answers.length <= qIndex) {
+                            student.answers.push(null);
+                        }
+                        student.answers[qIndex] = {
+                            answer: r.answer,
+                            explanation: r.explanation
+                        };
+
+                        // Extract votes if present
+                        if (r.votes) {
+                            extractedVotes[`${qIndex}_${r.rowIndex}`] = r.votes;
+                        }
+                    });
+                }
+            });
+
+            // Convert map to array
+            transformedData.responses = Array.from(studentMap.values());
+
+            // Store extracted votes for later use
+            this.votes = extractedVotes;
+
+            return transformedData;
+        }
+
+        // Data is already in expected format
+        return rawData;
     }
 
     loadUserVotes() {
