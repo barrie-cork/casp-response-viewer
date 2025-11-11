@@ -1,23 +1,33 @@
 /**
- * CASP Response Viewer - Configuration
- *
- * SETUP INSTRUCTIONS:
- * 1. Deploy your Apps Script as a web app (see apps-script/Code.gs for instructions)
- * 2. Copy the web app URL from the deployment
- * 3. Replace 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE' below with your actual URL
- * 4. The URL should look like: https://script.google.com/macros/s/[ID]/exec
+ * Configuration for CASP RCT Response Viewer
+ * Update the API_URL with your Google Apps Script Web App URL
  */
 
 const CONFIG = {
-  // Replace with your Apps Script web app URL
-  API_URL: 'https://script.google.com/macros/s/AKfycbxCKMwcaRaFcux5IQgUznn4Ar3B2AxSXnGzRsq_JwRHrHjbnyvfwpr9fUAj3NFTITUq/exec',
+    // Google Apps Script Web App URL
+    API_URL: 'https://script.google.com/macros/s/AKfycbxCKMwcaRaFcux5IQgUznn4Ar3B2AxSXnGzRsq_JwRHrHjbnyvfwpr9fUAj3NFTITUq/exec',
 
-  // Auto-refresh interval in milliseconds (30 seconds)
-  REFRESH_INTERVAL: 30000,
+    // Number of questions in RCT form (13 questions)
+    TOTAL_QUESTIONS: 13,
 
-  // Enable automatic data refresh
-  AUTO_REFRESH: true,
+    // Auto-refresh settings
+    REFRESH_INTERVAL: 30000, // 30 seconds in milliseconds
+    AUTO_REFRESH: true,
 
-  // Number of questions in the CASP checklist
-  TOTAL_QUESTIONS: 13
+    // Display settings
+    MAX_EXPLANATION_LENGTH: 2000, // Maximum characters to display
+    ENABLE_VOTING: true,
+    ENABLE_STATISTICS: true,
+
+    // LocalStorage keys for vote tracking
+    STORAGE_PREFIX: 'casp_rct_vote_',
+
+    // Chart colors
+    CHART_COLORS: {
+        yes: '#34a853',
+        no: '#ea4335',
+        cantTell: '#fbbc04'
+    }
 };
+
+// Configuration is now set with actual API URL
